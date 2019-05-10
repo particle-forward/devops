@@ -64,14 +64,13 @@ jobs:
           name: Verify Azure CLI is installed
 
   login-to-azure:
-    executor: azure-cli/default
+    executor: azure-cli/azure-docker
     steps:
-      - azure-cli/install
-      - azure-cli/login-with-user:
-          alternate-tenant: true
+      - azure-cli/login-with-service-principal
       - run:
           command: az resource list
-          name: List resources of tenant stored as `AZURE_TENANT` env var
+          name: List resources of tenant stored as `AZURE_SP_TENANT` env var
+
 
 workflows:
   version: 2
