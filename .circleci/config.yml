@@ -1,11 +1,12 @@
 version: 2
-
 jobs:
   dependencies:
     docker:
       - image: circleci/node:10
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run: npm i
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
@@ -14,12 +15,22 @@ jobs:
 
   build:
     docker:
-      - image: circleci/node:10
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run build
+      - run:
+          name: Login to dockerhub
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: Docker build
+          command: docker build -t mbssantos/devops:$CIRCLE_SHA1 .
+      - run:
+          name: Push to dockerhub
+          command: docker push mbssantos/oplab:$CIRCLE_SHA1
 
   lint:
     docker:
@@ -28,7 +39,8 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run test
+      - run: npm run lint-ci
+      - run: npm run stylelint-ci
 
   test:
     docker:
