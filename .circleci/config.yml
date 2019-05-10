@@ -27,14 +27,20 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Login to dockerhub
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          name: Login to container registry
+          command: docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: Docker build
-          command: docker build -t mbssantos/devops:latest .
+          command: docker build -t $REGISTRY_NAMEIMAGE/devops:latest  .
       - run:
-          name: Push to dockerhub
-          command: docker push mbssantos/devops:latest
+          name: Push image
+          command: docker push REGISTRY_NAMEIMAGE/devops:latest
+
+        # docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
+        # docker push $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:$TAG
+        # docker push $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:latest
+        # echo "Pushed image: " $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:$TAG " and :latest tag"
+
 
   lint:
     docker:
@@ -55,32 +61,37 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run test
 
-  verify-install:
-    executor: azure-cli/default
-    steps:
-      - azure-cli/install
-      - run:
-          command: az -v
-          name: Verify Azure CLI is installed
+  # verify-install:
+  #   executor: azure-cli/default
+  #   steps:
+  #     - azure-cli/install
+  #     - run:
+  #         command: az -v
+  #         name: Verify Azure CLI is installed
+  #
+  # login-to-azure:
+  #   executor: azure-cli/azure-docker
+  #   steps:
+  #     - azure-cli/login-with-service-principal
+  #     - run:
+  #         command: az resource list
+  #         name: List resources of tenant stored as `AZURE_SP_TENANT` env var
 
-  login-to-azure:
-    executor: azure-cli/azure-docker
-    steps:
-      - azure-cli/login-with-service-principal
-      - run:
-          command: az resource list
-          name: List resources of tenant stored as `AZURE_SP_TENANT` env var
-
+  # "appId": "db53b921-bd36-46cd-baf7-6b20177c3680",
+  # "displayName": "azure-cli-2019-05-10-21-43-34",
+  # "name": "http://azure-cli-2019-05-10-21-43-34",
+  # "password": "1941679a-5e75-4051-bc66-859d54f2d614",
+  # "tenant": "df7432e9-2b1c-4ea6-93c6-89904adae8ac"
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - dependencies
-      - verify-install
-      - login-to-azure:
-          requires:
-            - verify-install
+      # - verify-install
+      # - login-to-azure:
+      #     requires:
+      #       - verify-install
       - build:
           requires:
             - dependencies
