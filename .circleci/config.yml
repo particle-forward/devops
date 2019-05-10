@@ -77,11 +77,11 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - dependencies
       - verify-install
-      - login-to-azure
+      - login-to-azure:
           requires:
             - verify-install
-      - dependencies
       - build:
           requires:
             - dependencies
