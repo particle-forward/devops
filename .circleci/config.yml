@@ -51,6 +51,18 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run test
 
+  verify-install:
+    executor: azure-cli/default
+    steps:
+      - azure-cli/install
+      - run:
+          command: az -v
+          name: Verify Azure CLI is installed
+
+orbs:
+  azure-cli: circleci/azure-cli@1.0.0
+version: 2.1
+
 workflows:
   version: 2
   build_and_test:
