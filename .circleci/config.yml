@@ -36,6 +36,7 @@ jobs:
           name: Push image
           command: docker push $REGISTRY_NAMEIMAGE/devops:latest
 
+
         # docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
         # docker push $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:$TAG
         # docker push $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:latest
