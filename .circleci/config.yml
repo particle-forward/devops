@@ -33,6 +33,12 @@ jobs:
           name: Docker build
           command: docker build -t $REGISTRY_NAMEIMAGE/devops:v1  .
       - run:
+          name: Build preview
+          command: echo "docker build -t $REGISTRY_NAMEIMAGE/devops:v1  ."
+      - run:
+          name: Push preview
+          command: echo "docker push $REGISTRY_NAMEIMAGE/devops:v1" 
+      - run:
           name: Push image
           command: docker push $REGISTRY_NAMEIMAGE/devops:v1
 
