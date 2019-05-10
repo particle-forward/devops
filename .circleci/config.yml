@@ -34,7 +34,7 @@ jobs:
           command: docker build -t $REGISTRY_NAMEIMAGE/devops:latest  .
       - run:
           name: Push image
-          command: docker push REGISTRY_NAMEIMAGE/devops:latest
+          command: docker push $REGISTRY_NAMEIMAGE/devops:latest
 
         # docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
         # docker push $REGISTRY_NAMEIMAGE/$DOCKER_IMAGE:$TAG
