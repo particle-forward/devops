@@ -37,10 +37,10 @@ jobs:
           command: echo "docker build -t $REGISTRY_NAMEIMAGE/devops:v1  ."
       - run:
           name: Push preview
-          command: echo "docker push $REGISTRY_NAMEIMAGE/devops:v1"
+          command: echo "docker push $REGISTRY_NAMEIMAGE/devops:v2"
       - run:
           name: Push image
-          command: docker push $REGISTRY_NAMEIMAGE/devops:v1
+          command: docker push $REGISTRY_NAMEIMAGE/devops:v2
 
 
         # docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
