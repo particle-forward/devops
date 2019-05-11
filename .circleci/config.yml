@@ -99,10 +99,10 @@ workflows:
   build_and_test:
     jobs:
       - dependencies
-      # - verify-install
-      # - login-to-azure:
-      #     requires:
-      #       - verify-install
+      - verify-install
+      - login-to-azure:
+          requires:
+            - verify-install
       - build:
           requires:
             - dependencies
