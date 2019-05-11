@@ -16,7 +16,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn Reacterino v3
+          Learn Reacterino v4
         </a>
       </header>
     </div>
