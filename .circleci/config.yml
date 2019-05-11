@@ -66,27 +66,34 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run test
 
-  verify-install:
-    executor: azure-cli/default
+  # verify-install:
+  #   executor: azure-cli/default
+  #   steps:
+  #     - azure-cli/install
+  #     - run:
+  #         command: az -v
+  #         name: Verify Azure CLI is installed
+
+  deploy-to-azure:
+    executor: azure-cli/azure-docker
     steps:
       - azure-cli/install
+      - azure-cli/login-with-service-principal
       - run:
-          command: az -v
-          name: Verify Azure CLI is installed
+          command: az resource list
+          name: List resources of tenant stored as `AZURE_SP_TENANT` env var
+      - run:
+          name: Install kubectl
+          command: az aks install-cli
+      - run:
+          name: Login to kubectl
+          command: az aks get-credentials --resource-group devops --name devops-cluster
       - run:
           name: Tell k8s to update
           command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v2
       - run:
           name: Wait for rollout
           command: kubectl rollout status deployment.v1.apps/fe-deployment
-
-  login-to-azure:
-    executor: azure-cli/azure-docker
-    steps:
-      - azure-cli/login-with-service-principal
-      - run:
-          command: az resource list
-          name: List resources of tenant stored as `AZURE_SP_TENANT` env var
 
   # "appId": "db53b921-bd36-46cd-baf7-6b20177c3680",
   # "displayName": "azure-cli-2019-05-10-21-43-34",
@@ -99,13 +106,16 @@ workflows:
   build_and_test:
     jobs:
       - dependencies
-      - verify-install
-      - login-to-azure:
-          requires:
-            - verify-install
+      # - verify-install
+      # - login-to-azure:
+      #     requires:
+      #       - verify-install
       - build:
           requires:
             - dependencies
+      - deploy-to-azure:
+          requires:
+            - build
       - test:
           requires:
             - build
