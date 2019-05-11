@@ -33,14 +33,23 @@ jobs:
           name: Docker build
           command: docker build -t $REGISTRY_NAMEIMAGE/devops:v2 .
       - run:
-          name: Build preview
-          command: echo "docker build -t $REGISTRY_NAMEIMAGE/devops:v2  ."
-      - run:
-          name: Push preview
-          command: echo "docker push $REGISTRY_NAMEIMAGE/devops:v2"
-      - run:
           name: Push image
           command: docker push $REGISTRY_NAMEIMAGE/devops:v2
+
+  # deploy:
+  #   docker:
+  #     - image: docker:17.05.0-ce-git
+  #   steps:
+  #     - run:
+  #         name: Tell k8s to update
+  #         command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v2
+  #     - run:
+  #         name: Wait for rollout
+  #         command: kubectl rollout status deployment.v1.apps/fe-deployment
+#
+# kubectl --record devops123.azurecr.io/devops set image devops123.azurecr.io/devops devops=devops:v2
+# kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v1
+
 
 
         # docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
@@ -57,21 +66,27 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run test
 
-  # verify-install:
-  #   executor: azure-cli/default
-  #   steps:
-  #     - azure-cli/install
-  #     - run:
-  #         command: az -v
-  #         name: Verify Azure CLI is installed
-  #
-  # login-to-azure:
-  #   executor: azure-cli/azure-docker
-  #   steps:
-  #     - azure-cli/login-with-service-principal
-  #     - run:
-  #         command: az resource list
-  #         name: List resources of tenant stored as `AZURE_SP_TENANT` env var
+  verify-install:
+    executor: azure-cli/default
+    steps:
+      - azure-cli/install
+      - run:
+          command: az -v
+          name: Verify Azure CLI is installed
+      - run:
+          name: Tell k8s to update
+          command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v2
+      - run:
+          name: Wait for rollout
+          command: kubectl rollout status deployment.v1.apps/fe-deployment
+
+  login-to-azure:
+    executor: azure-cli/azure-docker
+    steps:
+      - azure-cli/login-with-service-principal
+      - run:
+          command: az resource list
+          name: List resources of tenant stored as `AZURE_SP_TENANT` env var
 
   # "appId": "db53b921-bd36-46cd-baf7-6b20177c3680",
   # "displayName": "azure-cli-2019-05-10-21-43-34",
