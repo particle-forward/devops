@@ -31,10 +31,10 @@ jobs:
           command: docker login $REGISTRY_NAME -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: Docker build
-          command: docker build -t $REGISTRY_NAMEIMAGE/devops:v2 .
+          command: docker build -t $REGISTRY_NAMEIMAGE/devops:v3 .
       - run:
           name: Push image
-          command: docker push $REGISTRY_NAMEIMAGE/devops:v2
+          command: docker push $REGISTRY_NAMEIMAGE/devops:v3
 
   # deploy:
   #   docker:
@@ -42,12 +42,12 @@ jobs:
   #   steps:
   #     - run:
   #         name: Tell k8s to update
-  #         command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v2
+  #         command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v3
   #     - run:
   #         name: Wait for rollout
   #         command: kubectl rollout status deployment.v1.apps/fe-deployment
 #
-# kubectl --record devops123.azurecr.io/devops set image devops123.azurecr.io/devops devops=devops:v2
+# kubectl --record devops123.azurecr.io/devops set image devops123.azurecr.io/devops devops=devops:v3
 # kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v1
 
 
@@ -90,7 +90,7 @@ jobs:
           command: az aks get-credentials --resource-group devops --name devops-cluster
       - run:
           name: Tell k8s to update
-          command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v2
+          command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:v3
       - run:
           name: Wait for rollout
           command: kubectl rollout status deployment.v1.apps/fe-deployment
@@ -106,10 +106,6 @@ workflows:
   build_and_test:
     jobs:
       - dependencies
-      # - verify-install
-      # - login-to-azure:
-      #     requires:
-      #       - verify-install
       - build:
           requires:
             - dependencies
