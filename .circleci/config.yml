@@ -91,7 +91,9 @@ jobs:
 
       - run:
           name: Create new pod in k8s
-          command: kubectl run api-$CIRCLE_BRANCH --image=devops123.azurecr.io/devops:$CIRCLE_SHA1 --replicas=1 --port=3000
+          # We do || true so this tasks never stops the pipeline
+          # TODO: Only continue when pod already exists (exit code 1)
+          command: kubectl run api-$CIRCLE_BRANCH --image=devops123.azurecr.io/devops:$CIRCLE_SHA1 --replicas=1 --port=3000 || true
 
       - run:
           name: Create new Load Balancer service
@@ -126,4 +128,4 @@ workflows:
             - build
       - test:
           requires:
-            - build
+            - deploy-to-azure
