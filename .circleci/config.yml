@@ -99,7 +99,7 @@ jobs:
 
       - run:
           name: Tell k8s to update
-          command: echo "kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:$CIRCLE_SHA1"
+          command: kubectl --record deployment.apps/fe-deployment set image deployment.v1.apps/fe-deployment react=devops123.azurecr.io/devops:$CIRCLE_SHA1 || true
 
       - run:
           name: Wait for rollout
