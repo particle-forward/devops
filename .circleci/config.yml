@@ -95,7 +95,7 @@ jobs:
 
       - run:
           name: Create new Load Balancer service
-          command: kubectl expose api-$CIRCLE_BRANCH --type=LoadBalancer --name=api-$CIRCLE_BRANCH-service
+          command: kubectl expose deployment api-$CIRCLE_BRANCH --type=LoadBalancer --name=api-$CIRCLE_BRANCH-service
 
       - run:
           name: Tell k8s to update
