@@ -16,7 +16,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn Reacterino ci-deployeroo v2
+          Learn Reacterino feature-ci-testing v1
         </a>
       </header>
     </div>
